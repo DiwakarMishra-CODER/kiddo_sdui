@@ -31,7 +31,7 @@ SduiPayload (typed)
       │                                               PRODUCT_GRID_2X2 → ProductGrid2x2
       │                                               DYNAMIC_COLLECTION → DynamicCollection
       │
-      └─ overlay? ─► CampaignOverlay (Lottie, pointerEvents="none")
+      └─ overlay? ─► CampaignOverlay (pure RN Animated, pointerEvents="none")
 
 Interactive events:
   Block components emit Action objects via onAction callback
@@ -63,9 +63,9 @@ export const BLOCK_REGISTRY: Record<BlockType, ComponentType<AnyBlockProps>> = {
 
 A **typed hash-map**, never a `switch` statement. Looking up an unregistered type returns `undefined` — the block is filtered out silently before the FlashList ever sees it. The resilience test in `src/__tests__/registry.test.ts` verifies this.
 
-### Single Vertical FlashList
+### Single Vertical FlatList
 
-The entire homepage renders inside **one** vertical `FlashList` in `src/screens/HomeScreen.tsx`. `DYNAMIC_COLLECTION` blocks contain a nested **horizontal** `FlashList` with `nestedScrollEnabled` — horizontal drags don't interrupt vertical scroll momentum.
+The entire homepage renders inside **one** vertical `FlatList` in `src/screens/HomeScreen.tsx`. `DYNAMIC_COLLECTION` blocks contain a nested **horizontal** `FlatList` with `nestedScrollEnabled` — horizontal drags don't interrupt vertical scroll momentum.
 
 ### Re-render Isolation (graded criterion)
 
@@ -81,7 +81,7 @@ The payload's `theme` object is injected into a `ThemeProvider` at the root. All
 
 ### Campaign Overlay
 
-`CampaignOverlay` wraps a `LottieView` in an `Animated.View` with `position: absolute` and `pointerEvents="none"`. Taps pass through to the feed while the animation plays. Assets are resolved via `src/utils/assetCache.ts` which maps known remote URLs to bundled local JSONs — the same code path works for remote URLs in production.
+`CampaignOverlay` uses pure React Native `Animated` particles inside an `Animated.View` with `position: absolute` and `pointerEvents="none"`. Taps pass through to the feed while the animation plays. Each campaign renders a distinct particle style (paper-planes, water-drops, or confetti) detected from `overlay.animationUrl`. Assets are mapped via `src/utils/assetCache.ts` — the same code path is ready for remote Lottie URLs in production.
 
 ---
 
@@ -150,10 +150,10 @@ Zero TypeScript errors with `strict`, `noUncheckedIndexedAccess`, `noImplicitOve
 
 | Concern | Library |
 |---|---|
-| Framework | Expo managed (SDK 56) |
+| Framework | Expo managed (SDK 54) |
 | Language | TypeScript strict |
-| Lists | `@shopify/flash-list` v2 |
+| Lists | React Native `FlatList` |
 | State | Zustand v5 (slice selectors) |
-| Animations | `lottie-react-native` |
+| Animations | Pure React Native `Animated` |
 | Images | `expo-image` (cache + placeholder) |
 | Safe area | `react-native-safe-area-context` |
