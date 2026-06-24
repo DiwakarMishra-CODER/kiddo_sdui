@@ -1,20 +1,30 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { CampaignProvider, useCampaign } from '@/state/campaignStore';
+import { ThemeProvider } from '@/theme/ThemeProvider';
+import { HomeScreen } from '@/screens/HomeScreen';
 
-export default function App() {
+/**
+ * ThemeGate: sits inside CampaignProvider so it can read the active payload's
+ * theme and re-mount ThemeProvider whenever the campaign changes.
+ */
+function ThemeGate() {
+  const { payload } = useCampaign();
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <ThemeProvider theme={payload.theme}>
+      <HomeScreen />
+    </ThemeProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+/** Root entry point — campaign + theme providers wrap the screen tree. */
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <CampaignProvider>
+        <StatusBar style="auto" />
+        <ThemeGate />
+      </CampaignProvider>
+    </SafeAreaProvider>
+  );
+}
