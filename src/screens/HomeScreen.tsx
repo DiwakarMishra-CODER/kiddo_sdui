@@ -181,6 +181,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
+    marginTop: 22,
     borderBottomWidth: StyleSheet.hairlineWidth,
     ...elevation.card,
   },
